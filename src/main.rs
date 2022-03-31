@@ -1,5 +1,5 @@
 mod ast;
-mod parsers;
 mod error;
+mod parsers;
 
-fn main() { }
+fn main() {}
