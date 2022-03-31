@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 futures = "0.3.21"
+nom = "7.1.0"
+nom_locate = "4.0.0"
