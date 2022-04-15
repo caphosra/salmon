@@ -6,7 +6,8 @@ use nom::sequence::delimited;
 use nom::sequence::tuple;
 use nom_locate::position;
 
-use crate::ast::expr::AddExpr;
+use crate::ast::expr::BinaryOp;
+use crate::ast::expr::BinaryOpExpr;
 use crate::ast::expr::Expression;
 use crate::parsers::expr::term::term_parser;
 use crate::parsers::ParserResult;
@@ -23,17 +24,17 @@ pub fn expr_parser<'ctx>(input: Span<'ctx>) -> ParserResult<Box<dyn Expression +
     ))(input)?;
 
     if let Some((op, right)) = right {
-        let is_add = match op.fragment() {
-            &"+" => true,
-            &"-" => false,
+        let op = match op.fragment() {
+            &"+" => BinaryOp::Add,
+            &"-" => BinaryOp::Sub,
             _ => panic!("The operator must be \"+\" or \"-\"."),
         };
 
         Ok((
             text,
-            Box::new(AddExpr {
+            Box::new(BinaryOpExpr {
                 position: pos.into(),
-                is_add,
+                op,
                 left,
                 right,
             }),
@@ -52,16 +53,17 @@ mod test {
     use crate::ast::expr::term::NumberTerm;
     use crate::ast::expr::term::ParamTerm;
     use crate::ast::expr::term::Term;
-    use crate::ast::expr::AddExpr;
+    use crate::ast::expr::BinaryOp;
+    use crate::ast::expr::BinaryOpExpr;
     use crate::init_expr;
 
     #[test]
     fn term_parser_test1() {
         assert_expr_eq!(
             expr_parser("123 + 314 * %val"),
-            init_expr!(AddExpr {
+            init_expr!(BinaryOpExpr {
                 pos: (1, 1),
-                is_add: true,
+                op: BinaryOp::Add,
                 left: init_expr!(Term {
                     pos: (1, 1),
                     values: vec![init_expr!(NumberTerm {
