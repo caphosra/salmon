@@ -18,8 +18,6 @@ pub fn id_parser(input: Span) -> ParserResult<String> {
 
 #[cfg(test)]
 pub mod test {
-    use std::fmt::Debug;
-
     use crate::ast::expr::Expression;
     use crate::parsers::utils::ParserResult;
     use crate::parsers::Span;
